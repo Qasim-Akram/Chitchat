@@ -1,0 +1,41 @@
+# actual env file, never commit this
+.env
+
+# python cache stuff
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# virtual environment folder
+venv/
+env/
+.venv/
+
+# django stuff
+*.log
+db.sqlite3
+staticfiles/
+media/
+
+# migrations can be committed but some people prefer not to
+# im keeping them in for this project
+# */migrations/
+
+# vs code
+.vscode/
+
+# pycharm
+.idea/
+
+# mac junk
+.DS_Store
+
+# windows junk
+Thumbs.db
+desktop.ini
+
+# pytest
+.pytest_cache/
+htmlcov/
+.coverage
