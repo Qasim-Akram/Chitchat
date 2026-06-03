@@ -71,7 +71,7 @@ export default function RoomsPage() {
 
       <header className="rooms-header">
         <div className="rooms-header-left">
-          <span className="rooms-logo">CC</span>
+          <span className="rooms-logo">CR</span>
           <span className="rooms-title">ChatRoom</span>
         </div>
         <div className="rooms-header-right">
