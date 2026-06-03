@@ -1,23 +1,18 @@
-"""
-ASGI config -- this replaces the normal wsgi.py
-
-WSGI is the old way, it only handles regular HTTP requests
-ASGI is the new way, it handles HTTP AND websockets
-Django Channels hooks into ASGI to add websocket support
-"""
-
 import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+
 from django.core.asgi import get_asgi_application
+
+# call this first, it loads all the apps
+django_asgi_app = get_asgi_application()
+
+# only import channels stuff AFTER django is loaded
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import chat.routing
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-
-# ProtocolTypeRouter splits traffic based on protocol type
-# http goes to normal django, websocket goes to channels
 application = ProtocolTypeRouter({
-    'http': get_asgi_application(),
+    'http': django_asgi_app,
     'websocket': AuthMiddlewareStack(
         URLRouter(
             chat.routing.websocket_urlpatterns
