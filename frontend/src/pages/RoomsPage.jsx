@@ -106,7 +106,7 @@ export default function RoomsPage() {
               maxLength={50}
             />
             <button type="submit" disabled={creating}>
-              {creating ? 'creating...' : 'create'}
+              {creating ? '...' : 'create'}
             </button>
             {error && <p className="form-error">{error}</p>}
           </form>

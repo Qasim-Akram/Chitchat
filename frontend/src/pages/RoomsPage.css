@@ -56,12 +56,12 @@
   font-size: 12px;
   padding: 5px 10px;
   border: 1px solid var(--border);
+  cursor: pointer;
 }
 
 .logout-btn:hover {
   color: var(--text);
   border-color: var(--border-light);
-  opacity: 1;
 }
 
 .rooms-main {
@@ -100,11 +100,12 @@
   padding: 7px 14px;
   font-size: 12px;
   letter-spacing: 0.5px;
+  cursor: pointer;
 }
 
 .new-room-btn:hover {
   border-color: var(--border-light);
-  opacity: 1;
+  color: var(--text);
 }
 
 .new-room-form {
@@ -117,6 +118,15 @@
 .new-room-form input {
   flex: 1;
   border-right: none;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.new-room-form input:focus {
+  outline: none;
+  border-color: var(--border-light);
 }
 
 .new-room-form button {
@@ -128,6 +138,11 @@
   letter-spacing: 1px;
   white-space: nowrap;
   border: 1px solid var(--text);
+  cursor: pointer;
+}
+
+.new-room-form button:hover:not(:disabled) {
+  opacity: 0.85;
 }
 
 .form-error {

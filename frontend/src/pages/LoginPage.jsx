@@ -99,7 +99,7 @@ export default function LoginPage() {
           {error && <p className="error-msg">{error}</p>}
 
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'please wait...' : mode === 'login' ? 'sign in' : 'create account'}
+            {loading ? '...' : mode === 'login' ? 'sign in' : 'create account'}
           </button>
 
         </form>

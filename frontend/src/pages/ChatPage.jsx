@@ -105,10 +105,6 @@ export default function ChatPage() {
             <span className="chat-room-name"># {room?.name || slug}</span>
           </div>
         </div>
-        <div className="chat-status">
-          <span className={`status-dot ${connected ? 'online' : 'offline'}`}></span>
-          <span className="status-text">{statusText}</span>
-        </div>
       </header>
 
       <div className="chat-messages">
@@ -147,7 +143,7 @@ export default function ChatPage() {
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={connected ? `message #${room?.name || slug}` : 'waiting for connection...'}
+            placeholder={`message #${room?.name || slug}`}
             disabled={!connected}
             rows={1}
             className="chat-input"
@@ -160,7 +156,10 @@ export default function ChatPage() {
             send
           </button>
         </div>
-        <p className="input-hint">enter to send · shift+enter for new line</p>
+        <div className="chat-status-bottom">
+          <span className={`status-dot-bottom ${connected ? 'online' : 'offline'}`}></span>
+          <span className="status-text-bottom">{statusText}</span>
+        </div>
       </div>
 
     </div>

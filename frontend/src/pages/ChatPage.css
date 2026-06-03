@@ -5,11 +5,9 @@
   overflow: hidden;
 }
 
-/* header */
 .chat-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 20px;
   height: 52px;
   border-bottom: 1px solid var(--border);
@@ -27,48 +25,20 @@
   background: none;
   color: var(--text-dim);
   font-size: 18px;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border: none;
   line-height: 1;
+  cursor: pointer;
 }
 
 .back-btn:hover {
   color: var(--text);
-  opacity: 1;
-  border-color: var(--border-light);
 }
 
 .chat-room-name {
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 1px;
-}
-
-.chat-status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--text-dimmer);
-}
-
-.status-dot.online {
-  background: var(--online);
-}
-
-.status-dot.offline {
-  background: var(--danger);
-}
-
-.status-text {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-dim);
 }
 
 /* messages */
@@ -177,6 +147,14 @@
   overflow-y: auto;
   border-right: none;
   line-height: 1.5;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--border-light);
 }
 
 .send-btn {
@@ -185,25 +163,44 @@
   padding: 0 20px;
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  letter-spacing: 0.5px;
   border: 1px solid var(--text);
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .send-btn:disabled {
   background: var(--bg-3);
   color: var(--text-dimmer);
   border-color: var(--border);
+  cursor: not-allowed;
 }
 
-.input-hint {
+.chat-status-bottom {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.status-dot-bottom {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-dimmer);
+}
+
+.status-dot-bottom.online {
+  background: var(--online);
+}
+
+.status-dot-bottom.offline {
+  background: var(--danger);
+}
+
+.status-text-bottom {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--text-dimmer);
-  margin-top: 8px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: right;
+  color: var(--text-dim);
 }
