@@ -27,32 +27,25 @@ export default function LoginPage() {
 
     try {
       if (mode === 'register') {
-        // first register the account
         await registerUser(username, email, password);
-        // then log in right away, no point making them do it manually
       }
 
-      // login to get tokens
       const res = await loginUser(username, password);
-      const tokens = res.data; // has access + refresh
+      const tokens = res.data;
 
-      // fetch the full user profile
-      // we set the token manually here since context isnt updated yet
-      const profileRes = await getProfile();
-      // actually we need token first, lets do it properly
-      // store token temporarily then fetch profile
+      // save token to localStorage first so the axios interceptor picks it up
       localStorage.setItem('access_token', tokens.access);
-      const { data: userData } = await getProfile();
 
-      // now save everything to context properly
-      login(userData, tokens);
+      // now fetch profile -- interceptor will attach the token automatically
+      const profileRes = await getProfile();
+
+      // save everything to context
+      login(profileRes.data, tokens);
       navigate('/rooms');
 
     } catch (err) {
-      // try to get a useful error message from the response
       const data = err.response?.data;
       if (data) {
-        // django validation errors come back as objects like {username: ["already taken"]}
         const firstError = Object.values(data)[0];
         setError(Array.isArray(firstError) ? firstError[0] : firstError);
       } else {
@@ -70,7 +63,7 @@ export default function LoginPage() {
         <div className="login-header">
           <span className="login-logo">CC</span>
           <h1>ChitChat</h1>
-          <p>{ mode === 'login' ? 'sign in to continue' : 'create an account' }</p>
+          <p>{mode === 'login' ? 'sign in to continue' : 'create an account'}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
