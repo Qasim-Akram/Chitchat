@@ -1,8 +1,3 @@
-/*
-  RoomsPage -- shows all available chat rooms
-  you can also create a new room from here
-*/
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -41,11 +36,9 @@ export default function RoomsPage() {
 
     try {
       const res = await createRoom(newRoomName.trim());
-      // add new room to the list and clear the form
       setRooms(prev => [...prev, res.data]);
       setNewRoomName('');
       setShowForm(false);
-      // go straight into the new room
       navigate(`/rooms/${res.data.slug}`);
     } catch (err) {
       const data = err.response?.data;
@@ -64,7 +57,7 @@ export default function RoomsPage() {
       await joinRoom(slug);
       navigate(`/rooms/${slug}`);
     } catch (err) {
-      navigate(`/rooms/${slug}`); // just go there anyway
+      navigate(`/rooms/${slug}`);
     }
   };
 

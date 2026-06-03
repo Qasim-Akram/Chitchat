@@ -1,15 +1,3 @@
-/*
-  ChatPage -- the actual chat room
-
-  this page does two things:
-  1. loads message history via REST API (HTTP)
-  2. connects to WebSocket for real-time messages
-
-  the tricky part is combining both -- old messages come from
-  the API, new messages come from the WebSocket. we merge them
-  into one list.
-*/
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -17,7 +5,7 @@ import { getRoom } from '../api/chat';
 import './ChatPage.css';
 
 export default function ChatPage() {
-  const { slug } = useParams(); // room slug from the url
+  const { slug } = useParams();
   const { user, accessToken } = useAuth();
   const navigate = useNavigate();
 
@@ -27,11 +15,10 @@ export default function ChatPage() {
   const [connected, setConnected] = useState(false);
   const [statusText, setStatusText] = useState('connecting...');
 
-  const wsRef = useRef(null);         // holds the WebSocket instance
-  const bottomRef = useRef(null);     // dummy div at bottom for auto scroll
+  const wsRef = useRef(null);
+  const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
-  // load room info and initial messages
   useEffect(() => {
     const loadRoom = async () => {
       try {
@@ -47,13 +34,9 @@ export default function ChatPage() {
     loadRoom();
   }, [slug, navigate]);
 
-  // websocket connection
-  // runs when the component mounts (and if slug changes)
   useEffect(() => {
     if (!accessToken) return;
 
-    // we pass the token as a query param because websockets
-    // dont support custom headers like HTTP does
     const wsUrl = `ws://localhost:8000/ws/chat/${slug}/?token=${accessToken}`;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
@@ -68,7 +51,6 @@ export default function ChatPage() {
       const data = JSON.parse(event.data);
 
       if (data.type === 'message') {
-        // new chat message, add to list
         setMessages(prev => [...prev, {
           id: data.message_id,
           content: data.message,
@@ -76,7 +58,6 @@ export default function ChatPage() {
           timestamp: data.timestamp,
         }]);
       }
-      // could handle user_join and user_leave here too if we wanted
     };
 
     ws.onclose = () => {
@@ -88,13 +69,11 @@ export default function ChatPage() {
       setStatusText('connection error');
     };
 
-    // cleanup: close websocket when leaving the page
     return () => {
       ws.close();
     };
   }, [slug, accessToken]);
 
-  // scroll to bottom whenever messages update
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -103,27 +82,22 @@ export default function ChatPage() {
     const text = inputText.trim();
     if (!text || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
 
-    // send to backend via websocket
     wsRef.current.send(JSON.stringify({ message: text }));
     setInputText('');
   };
 
   const handleKeyDown = (e) => {
-    // send on Enter, new line on Shift+Enter
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
   };
 
-  // group consecutive messages from the same user together
-  // so we dont repeat the username on every single line
   const groupedMessages = groupMessages(messages);
 
   return (
     <div className="chat-page">
 
-      {/* top bar */}
       <header className="chat-header">
         <div className="chat-header-left">
           <button className="back-btn" onClick={() => navigate('/rooms')}>←</button>
@@ -137,7 +111,6 @@ export default function ChatPage() {
         </div>
       </header>
 
-      {/* messages area */}
       <div className="chat-messages">
         {messages.length === 0 && (
           <div className="chat-empty">
@@ -164,11 +137,9 @@ export default function ChatPage() {
           </div>
         ))}
 
-        {/* invisible div we scroll to */}
         <div ref={bottomRef} />
       </div>
 
-      {/* input bar */}
       <div className="chat-input-area">
         <div className="chat-input-wrap">
           <textarea
@@ -196,15 +167,12 @@ export default function ChatPage() {
   );
 }
 
-// groups consecutive messages from the same sender together
 function groupMessages(messages) {
   if (!messages.length) return [];
 
   const groups = [];
   let currentGroup = null;
 
-  // we need the logged in user to know which messages are "own"
-  // get it from localStorage since we're outside the component
   const savedUser = localStorage.getItem('user');
   const currentUsername = savedUser ? JSON.parse(savedUser).username : null;
 
@@ -212,10 +180,8 @@ function groupMessages(messages) {
     const isOwn = msg.sender_username === currentUsername;
 
     if (currentGroup && currentGroup.username === msg.sender_username) {
-      // same sender as last message, add to current group
       currentGroup.messages.push(msg);
     } else {
-      // new sender, start a new group
       currentGroup = {
         username: msg.sender_username,
         isOwn,
@@ -228,7 +194,6 @@ function groupMessages(messages) {
   return groups;
 }
 
-// format timestamp to something readable like "2:34 PM"
 function formatTime(timestamp) {
   if (!timestamp) return '';
   const date = new Date(timestamp);

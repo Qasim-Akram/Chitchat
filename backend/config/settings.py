@@ -1,8 +1,3 @@
-"""
-Django settings for chat_project.
-nothing fancy here, pretty standard setup
-"""
-
 from pathlib import Path
 from decouple import config
 
@@ -14,7 +9,6 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
-# apps list -- order kinda matters here
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -22,14 +16,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # third party
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
     'channels',
-
-    # our own apps
     'users',
     'chat',
 ]
@@ -37,7 +27,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # cors has to be before CommonMiddleware
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -63,11 +53,8 @@ TEMPLATES = [
     },
 ]
 
-# for channels we use daphne as the ASGI server instead of normal WSGI
-# this is what makes websockets possible
 ASGI_APPLICATION = 'config.asgi.application'
 
-# postgres database config
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -79,8 +66,6 @@ DATABASES = {
     }
 }
 
-# redis channel layer -- this is how different server processes talk to each other
-# when user A sends a message, redis broadcasts it to user B's connection
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -90,16 +75,13 @@ CHANNEL_LAYERS = {
     },
 }
 
-# JWT token settings
-# access token is short lived, refresh token lasts longer
 from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,  # gives a new refresh token each time u refresh
+    'ROTATE_REFRESH_TOKENS': True,
 }
 
-# DRF settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -109,9 +91,8 @@ REST_FRAMEWORK = {
     ),
 }
 
-# cors -- allow react dev server to talk to django
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # react default port
+    'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]
 

@@ -1,8 +1,3 @@
-/*
-  LoginPage -- handles both login and register
-  toggle between the two with a button at the bottom
-*/
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +5,7 @@ import { loginUser, registerUser, getProfile } from '../api/auth';
 import './LoginPage.css';
 
 export default function LoginPage() {
-  const [mode, setMode] = useState('login'); // 'login' or 'register'
+  const [mode, setMode] = useState('login');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,13 +28,10 @@ export default function LoginPage() {
       const res = await loginUser(username, password);
       const tokens = res.data;
 
-      // save token to localStorage first so the axios interceptor picks it up
       localStorage.setItem('access_token', tokens.access);
 
-      // now fetch profile -- interceptor will attach the token automatically
       const profileRes = await getProfile();
 
-      // save everything to context
       login(profileRes.data, tokens);
       navigate('/rooms');
 
