@@ -72,7 +72,7 @@ export default function RoomsPage() {
       <header className="rooms-header">
         <div className="rooms-header-left">
           <span className="rooms-logo">CC</span>
-          <span className="rooms-title">ChitChat</span>
+          <span className="rooms-title">ChatRoom</span>
         </div>
         <div className="rooms-header-right">
           <span className="rooms-username">{user?.username}</span>

@@ -54,7 +54,7 @@ export default function LoginPage() {
 
         <div className="login-header">
           <span className="login-logo">CC</span>
-          <h1>ChitChat</h1>
+          <h1>ChatRoom</h1>
           <p>{mode === 'login' ? 'sign in to continue' : 'create an account'}</p>
         </div>
 

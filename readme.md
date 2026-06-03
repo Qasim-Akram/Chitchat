@@ -1,4 +1,4 @@
-# ChitChat — Real-Time Chat Application
+# ChatRoom — Real-Time Chat Application
 
 **Student:** Muhammad Qasim Akram
 **Roll No:** F23BDOCS1E02151(2E)
@@ -8,7 +8,7 @@
 
 ## What Is This
 
-ChitChat is a real-time chat application where users can register, log in, create chat rooms, and send messages that appear instantly on everyone's screen without refreshing the page. It uses WebSockets for live messaging and a REST API for everything else like authentication and loading message history.
+ChatRoom is a real-time chat application where users can register, log in, create chat rooms, and send messages that appear instantly on everyone's screen without refreshing the page. It uses WebSockets for live messaging and a REST API for everything else like authentication and loading message history.
 
 ---
 
@@ -31,7 +31,7 @@ ChitChat is a real-time chat application where users can register, log in, creat
 ## Project Structure
 
 ```
-chitchat/
+ChatRoom/
 ├── backend/
 │   ├── config/
 │   │   ├── settings.py       # all django settings
