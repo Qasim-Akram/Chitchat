@@ -1,14 +1,3 @@
-/*
-  api.js -- central place for all HTTP requests to the backend
-
-  we create one axios instance with the base URL already set,
-  so everywhere else we just write api.get('/chat/rooms/') 
-  instead of axios.get('http://localhost:8000/api/chat/rooms/')
-
-  the interceptor automatically attaches the JWT token to every
-  request so we dont have to do it manually each time
-*/
-
 import axios from 'axios';
 
 const api = axios.create({
