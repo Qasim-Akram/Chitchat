@@ -6,5 +6,4 @@ class UsersConfig(AppConfig):
     name = 'users'
 
     def ready(self):
-        # this connects the signals when the app loads
         import users.signals
