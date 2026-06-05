@@ -1,7 +1,3 @@
-"""
-signals -- auto create a UserProfile whenever a new User is registered
-so we dont have to manually create it every time
-"""
 
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
