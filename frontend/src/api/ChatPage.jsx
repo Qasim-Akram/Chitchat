@@ -54,12 +54,10 @@ export default function ChatPage() {
           reactions: [],
         }]);
       } else if (data.type === 'reaction') {
-        // update reactions on the specific message
         setMessages(prev => prev.map(msg => {
           if (msg.id !== data.message_id) return msg;
           const reactions = msg.reactions || [];
           if (data.action === 'added') {
-            // add reaction if not already there
             const exists = reactions.find(r => r.username === data.username && r.emoji === data.emoji);
             if (exists) return msg;
             return { ...msg, reactions: [...reactions, { emoji: data.emoji, username: data.username }] };
@@ -98,7 +96,7 @@ export default function ChatPage() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   };
 
-  // close reaction menu when clicking outside
+  
   useEffect(() => {
     const handler = () => setActiveReactionMenu(null);
     document.addEventListener('click', handler);
@@ -141,7 +139,7 @@ export default function ChatPage() {
                   {msg.content}
                 </div>
 
-                {/* reaction button */}
+                
                 <button
                   className="react-btn"
                   onClick={(e) => { e.stopPropagation(); setActiveReactionMenu(activeReactionMenu === msg.id ? null : msg.id); }}
@@ -149,7 +147,7 @@ export default function ChatPage() {
                   +
                 </button>
 
-                {/* emoji picker */}
+                
                 {activeReactionMenu === msg.id && (
                   <div className="emoji-picker" onClick={e => e.stopPropagation()}>
                     {EMOJIS.map(emoji => (
@@ -160,7 +158,7 @@ export default function ChatPage() {
                   </div>
                 )}
 
-                {/* show existing reactions */}
+                
                 {msg.reactions && msg.reactions.length > 0 && (
                   <div className="msg-reactions">
                     {groupReactions(msg.reactions).map(({ emoji, users, count }) => (
@@ -224,7 +222,6 @@ function groupMessages(messages) {
   return groups;
 }
 
-// group same emoji reactions together with count
 function groupReactions(reactions) {
   const map = {};
   for (const r of reactions) {
