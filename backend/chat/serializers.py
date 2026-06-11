@@ -24,7 +24,6 @@ class MessageReactionSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     sender_username = serializers.CharField(source='sender.username', read_only=True)
-    # nest reactions inside each message
     reactions = MessageReactionSerializer(many=True, read_only=True)
 
     class Meta:
