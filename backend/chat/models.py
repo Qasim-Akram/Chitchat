@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
-    # one to one means each user gets exactly one profile
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     bio = models.CharField(max_length=200, blank=True, default='')
@@ -91,4 +91,4 @@ class Notification(models.Model):
         return f'Notif for {self.recipient.username}: {self.preview[:40]}'
 
     class Meta:
-        ordering = ['-created_at']  # newest first
+        ordering = ['-created_at']  
