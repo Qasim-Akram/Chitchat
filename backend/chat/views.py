@@ -54,10 +54,6 @@ class MessageListView(generics.ListAPIView):
 
 
 class MessageReactionView(APIView):
-    """
-    POST /api/chat/messages/<id>/react/   -> add a reaction
-    DELETE /api/chat/messages/<id>/react/ -> remove a reaction
-    """
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, message_id):
@@ -70,7 +66,7 @@ class MessageReactionView(APIView):
         except Message.DoesNotExist:
             return Response({'error': 'message not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # get_or_create so reacting twice doesnt duplicate
+        
         reaction, created = MessageReaction.objects.get_or_create(
             message=message,
             user=request.user,
@@ -78,7 +74,6 @@ class MessageReactionView(APIView):
         )
 
         if not created:
-            # already reacted with this emoji, remove it (toggle behavior)
             reaction.delete()
             return Response({'message': 'reaction removed'}, status=status.HTTP_200_OK)
 
@@ -87,9 +82,6 @@ class MessageReactionView(APIView):
 
 
 class NotificationListView(generics.ListAPIView):
-    """
-    GET /api/chat/notifications/   -> get all notifications for logged in user
-    """
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -98,9 +90,7 @@ class NotificationListView(generics.ListAPIView):
 
 
 class MarkNotificationsReadView(APIView):
-    """
-    POST /api/chat/notifications/read/   -> mark all as read
-    """
+    
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -109,9 +99,7 @@ class MarkNotificationsReadView(APIView):
 
 
 class UnreadNotificationCountView(APIView):
-    """
-    GET /api/chat/notifications/unread-count/
-    """
+    
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -120,16 +108,14 @@ class UnreadNotificationCountView(APIView):
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
-    """
-    GET/PUT /api/chat/profile/<username>/
-    """
+   
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'user__username'
     queryset = UserProfile.objects.all()
 
     def update(self, request, *args, **kwargs):
-        # only let users update their own profile
+
         instance = self.get_object()
         if instance.user != request.user:
             return Response({'error': 'not your profile'}, status=status.HTTP_403_FORBIDDEN)
