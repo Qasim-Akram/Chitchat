@@ -3,16 +3,10 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
-    
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-
     bio = models.CharField(max_length=200, blank=True, default='')
     avatar_url = models.URLField(blank=True, default='')
-
-    
     is_online = models.BooleanField(default=False)
-
-    
     last_seen = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -47,12 +41,8 @@ class Message(models.Model):
 
 class MessageReaction(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='reactions')
-
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reactions')
-
     emoji = models.CharField(max_length=10)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -70,20 +60,11 @@ class Notification(models.Model):
         ('reaction', 'Reaction'),
     ]
 
-    
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-
-    
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications')
-
     notif_type = models.CharField(max_length=20, choices=NOTIF_TYPES, default='message')
-
-    
     preview = models.CharField(max_length=200)
-
-    
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
-
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

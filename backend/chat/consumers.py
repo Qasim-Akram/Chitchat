@@ -1,7 +1,3 @@
-"""
-websocket consumer -- handles real time messaging, reactions, and online status
-"""
-
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -25,7 +21,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        # mark user as online
         await self.set_online_status(user, True)
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -65,7 +60,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             message = await self.save_message(user, content)
 
-            # create notifications for all other room members
             await self.create_notifications(user, message, content)
 
             await self.channel_layer.group_send(self.room_group_name, {
@@ -146,7 +140,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             profile.is_online = status
             profile.save()
         except Exception:
-            pass  # profile might not exist yet, thats ok
+            pass  
 
     @database_sync_to_async
     def toggle_reaction(self, user, message_id, emoji):
@@ -164,7 +158,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def create_notifications(self, sender, message, content):
-        # notify everyone in the room except the sender
         members = self.room.members.exclude(id=sender.id)
         preview = f'{sender.username}: {content[:80]}'
         notifications = [
