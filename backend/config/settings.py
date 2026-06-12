@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from urllib.parse import urlparse
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,12 +76,11 @@ else:
 
 redis_url = config('REDIS_URL', default='')
 if redis_url:
-    parsed = urlparse(redis_url)
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
             'CONFIG': {
-                'hosts': [(parsed.hostname, parsed.port)],
+                'hosts': [redis_url],
                 'capacity': 1500,
                 'expiry': 10,
             },
