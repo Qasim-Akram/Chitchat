@@ -26,7 +26,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        # tell room this user came online
+    
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'user_join',
             'username': user.username,
@@ -36,7 +36,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if hasattr(self, 'room_group_name'):
             user = self.scope.get('user')
             if user and user.is_authenticated:
-                # mark offline
                 await self.set_online_status(user, False)
                 await self.channel_layer.group_send(self.room_group_name, {
                     'type': 'user_leave',
@@ -71,7 +70,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             })
 
         elif msg_type == 'reaction':
-            # handle emoji reaction in real time
             message_id = data.get('message_id')
             emoji = data.get('emoji')
             if not message_id or not emoji:
@@ -87,7 +85,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'action': result,  # 'added' or 'removed'
             })
 
-    # ---- event handlers ----
+    
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
