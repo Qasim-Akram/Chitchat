@@ -37,7 +37,8 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!accessToken) return;
-    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${slug}/?token=${accessToken}`);
+    const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:8000';
+    const ws = new WebSocket(`${wsUrl}/ws/chat/${slug}/?token=${accessToken}`);
     wsRef.current = ws;
 
     ws.onopen = () => {
