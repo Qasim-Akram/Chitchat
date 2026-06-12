@@ -10,3 +10,4 @@ python-decouple==3.8
 redis==4.6.0   
 gunicorn
 whitenoise
+dj-database-url

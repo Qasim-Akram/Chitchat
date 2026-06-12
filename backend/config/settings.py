@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,30 +57,51 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'config.asgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+database_url = config('DATABASE_URL', default='')
+if database_url:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(database_url)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [(
-                config('REDIS_HOST', default='127.0.0.1'),
-                config('REDIS_PORT', default=6379, cast=int)
-            )],
-            'capacity': 1500,
-            'expiry': 10,
+redis_url = config('REDIS_URL', default='')
+if redis_url:
+    parsed = urlparse(redis_url)
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [(parsed.hostname, parsed.port)],
+                'capacity': 1500,
+                'expiry': 10,
+            },
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [(
+                    config('REDIS_HOST', default='127.0.0.1'),
+                    config('REDIS_PORT', default=6379, cast=int)
+                )],
+                'capacity': 1500,
+                'expiry': 10,
+            },
+        },
+    }
 
 from datetime import timedelta
 SIMPLE_JWT = {
