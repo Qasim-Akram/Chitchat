@@ -301,3 +301,47 @@
   font-size: 11px;
   color: var(--text-dim);
 }
+/* --- Mobile Responsive Fixes --- */
+@media (max-width: 600px) {
+  .rooms-header {
+    height: auto;             /* Allows content to stack or scale without clipping */
+    min-height: 52px;
+    padding: 10px 16px;       /* Reduced padding on smaller screens */
+    flex-wrap: wrap;          /* Allows items to wrap gracefully if space runs out */
+    gap: 12px;                /* Keeps wrapped rows separated */
+  }
+
+  .rooms-header-left {
+    gap: 8px;                 /* Tighter spacing between logo and title */
+  }
+
+  .rooms-logo {
+    font-size: 10px;          /* Slightly smaller logo font */
+    padding: 2px 4px;
+  }
+
+  .rooms-title {
+    font-size: 12px;          /* Shrinks title text */
+    letter-spacing: 1px;      /* Reduces wide tracking */
+  }
+
+  .rooms-header-right {
+    gap: 10px;                /* Tighter spacing between user, notifications, and logout */
+  }
+
+  .rooms-username {
+    display: none;            /* Optional: Hides username on small screens to save massive space */
+  }
+
+  .logout-btn,
+  .notif-btn {
+    padding: 4px 8px;         /* Smaller interactive tap targets for mobile */
+    font-size: 11px;
+  }
+
+  .notif-dropdown {
+    right: -16px;             /* Aligns dropdown to not clip past the screen edge */
+    width: calc(100vw - 32px); /* Makes dropdown responsive to the viewport width */
+    max-width: 280px;
+  }
+}
