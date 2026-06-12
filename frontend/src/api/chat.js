@@ -20,3 +20,15 @@ export const getMessages = (slug, beforeId = null) => {
   const params = beforeId ? { before: beforeId } : {};
   return api.get(`/chat/rooms/${slug}/messages/`, { params });
 };
+
+export const getNotifications = () => {
+  return api.get('/chat/notifications/');
+};
+
+export const markNotificationsRead = () => {
+  return api.post('/chat/notifications/read/');
+};
+
+export const getUnreadCount = () => {
+  return api.get('/chat/notifications/unread-count/');
+};

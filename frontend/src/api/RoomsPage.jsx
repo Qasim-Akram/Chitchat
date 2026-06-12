@@ -45,8 +45,7 @@ export default function RoomsPage() {
     if (!showNotifs) {
       try {
         const res = await getNotifications();
-        setNotifications(res.data);
-        // mark as read when they open it
+        setNotifications(res.data)
         await markNotificationsRead();
         setUnreadCount(0);
       } catch (err) {
