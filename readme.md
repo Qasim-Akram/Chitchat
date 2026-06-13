@@ -6,6 +6,14 @@
 
 ---
 
+## Live Demo
+
+- **Demo:** https://chat-room-two-pi.vercel.app/
+
+You can register a new account and start chatting directly from the live link above. No local setup is required to try it out.
+
+---
+
 ## What Is This
 
 ChatRoom is a real-time chat application where users can register, log in, create chat rooms, and send messages that appear instantly on everyone's screen without refreshing the page. Users can also react to messages with emojis and receive notifications when someone sends a message in a room they are part of. The app uses WebSockets for live messaging and a REST API for everything else like authentication and loading message history.
@@ -20,11 +28,13 @@ ChatRoom is a real-time chat application where users can register, log in, creat
 | REST API | Django REST Framework | Converts data to JSON for the frontend |
 | Real-Time | Django Channels | Adds WebSocket support to Django |
 | Database | PostgreSQL | Stores users, rooms, messages permanently |
-| Message Broker | Redis / Memurai | Lets WebSocket connections broadcast to each other |
+| Message Broker | Redis | Lets WebSocket connections broadcast to each other |
 | ASGI Server | Daphne | Replaces Django's default server, supports WebSockets |
 | Authentication | SimpleJWT | Issues JWT tokens for login sessions |
 | Frontend | React.js | Single page app, handles UI and routing |
 | HTTP Client | Axios | Makes API requests from React to Django |
+| Frontend Hosting | Vercel | Hosts the production React build |
+| Backend Hosting | Railway | Hosts the Django/Daphne app, PostgreSQL, and Redis |
 
 ---
 
@@ -67,6 +77,8 @@ ChatRoom/
 │   │   ├── admin.py            # registers models in django admin
 │   │   └── urls.py             # REST url patterns
 │   ├── manage.py
+│   ├── nixpacks.toml           # build/start config for Railway
+│   ├── Procfile                # process definition for Railway
 │   ├── requirements.txt
 │   └── .env.example
 │
@@ -101,7 +113,7 @@ ChatRoom/
 4. Every API request automatically includes the token via an axios interceptor
 
 ### Real-Time Messaging Flow
-1. User opens a chat room, React connects to `ws://localhost:8000/ws/chat/<room-slug>/`
+1. User opens a chat room, React connects to the backend's WebSocket endpoint (`wss://<railway-domain>/ws/chat/<room-slug>/` in production, `ws://localhost:8000/ws/chat/<room-slug>/` locally)
 2. JWT token is passed as a query param since browsers cannot set custom headers on WebSockets
 3. Custom middleware reads and validates the token, attaches user to the connection
 4. User is marked as online in their UserProfile
@@ -144,7 +156,40 @@ Everyone sees it instantly
 
 ---
 
-## Setup and Installation
+## Deployment
+
+### Backend — Railway
+
+The backend is deployed on [Railway](https://railway.app) as three services:
+
+- **Web service** — runs the Django/Daphne app, built and started via `nixpacks.toml` / `Procfile`
+  ```
+  web: daphne -b 0.0.0.0 -p $PORT --proxy-headers config.asgi:application
+  ```
+- **PostgreSQL** — managed Postgres instance, connected via the `DATABASE_URL` environment variable
+- **Redis** — managed Redis instance, connected via the `REDIS_URL` environment variable (used by Django Channels for pub/sub between connections)
+
+Required environment variables on the Railway web service:
+
+| Variable | Description |
+|---|---|
+| `SECRET_KEY` | Django secret key |
+| `DEBUG` | Set to `False` in production |
+| `DATABASE_URL` | Auto-provided by Railway's Postgres service |
+| `REDIS_URL` | Auto-provided by Railway's Redis service |
+
+### Frontend — Vercel
+
+The React frontend is deployed on [Vercel](https://vercel.com). The production build points its API base URL and WebSocket URL at the Railway backend domain (using `https://` / `wss://`).
+
+| Variable | Description |
+|---|---|
+| `REACT_APP_API_URL` | Base URL of the Railway backend, e.g. `https://chatroom-production-05d7.up.railway.app` |
+| `REACT_APP_WS_URL` | WebSocket base URL, e.g. `wss://chatroom-production-05d7.up.railway.app` |
+
+---
+
+## Local Development Setup
 
 ### Prerequisites
 - Python 3.10+
@@ -211,7 +256,7 @@ Browser opens automatically at `http://localhost:3000`
 
 ---
 
-## Running the App
+## Running the App Locally
 
 Four things need to be running at the same time:
 
@@ -250,8 +295,15 @@ Four things need to be running at the same time:
 | PATCH | /api/chat/profile/\<username\>/ | Update your profile | Yes |
 
 ### WebSocket
+
+**Local:**
 ```
 ws://localhost:8000/ws/chat/<room-slug>/?token=<access-token>
+```
+
+**Production:**
+```
+wss://chatroom-production-05d7.up.railway.app/ws/chat/<room-slug>/?token=<access-token>
 ```
 
 **Send a message:**
@@ -284,10 +336,14 @@ ws://localhost:8000/ws/chat/<room-slug>/?token=<access-token>
 - **Message broker pattern** — Redis as a pub/sub layer between server processes
 - **React state management** — Context API for global auth state
 - **Protected routing** — redirect unauthenticated users back to login
-- **CORS** — configured to allow React dev server to talk to Django
+- **CORS** — configured to allow the deployed frontend to talk to Django
+- **Deployment** — Django/Daphne + PostgreSQL + Redis on Railway, React build on Vercel
 
 ---
 
 ## Admin Panel
 
-Go to `http://localhost:8000/admin` and log in with your superuser credentials to manage all models — Users, UserProfiles, Rooms, Messages, MessageReactions, and Notifications.
+Local: `http://localhost:8000/admin`  
+Production: `https://chatroom-production-05d7.up.railway.app/admin`
+
+Log in with your superuser credentials to manage all models — Users, UserProfiles, Rooms, Messages, MessageReactions, and Notifications.
