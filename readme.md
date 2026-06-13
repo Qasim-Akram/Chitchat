@@ -1,349 +1,215 @@
-# ChatRoom — Real-Time Chat Application
+<div align="center">
 
-**Student:** Muhammad Qasim Akram  
-**Roll No:** F23BDOCS1E02151(2E)  
-**Semester Project**
+# 💬 ChatRoom
 
----
+### Real-time messaging, built from the socket up.
 
-## Live Demo
+[![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge&logo=vercel)](https://chat-room-two-pi.vercel.app/)
+[![Django](https://img.shields.io/badge/Django-4.2-092E20?style=for-the-badge&logo=django&logoColor=white)](#)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](#)
+[![WebSockets](https://img.shields.io/badge/WebSockets-Channels-FF4154?style=for-the-badge&logo=websocket&logoColor=white)](#)
 
-- **Demo:** https://chat-room-two-pi.vercel.app/
-
-You can register a new account and start chatting directly from the live link above. No local setup is required to try it out.
-
----
-
-## What Is This
-
-ChatRoom is a real-time chat application where users can register, log in, create chat rooms, and send messages that appear instantly on everyone's screen without refreshing the page. Users can also react to messages with emojis and receive notifications when someone sends a message in a room they are part of. The app uses WebSockets for live messaging and a REST API for everything else like authentication and loading message history.
+</div>
 
 ---
 
-## Tech Stack
+## ✨ What is this?
 
-| Layer | Technology | Why |
-|---|---|---|
-| Backend Framework | Django 4.2 | Handles routing, database, admin panel |
-| REST API | Django REST Framework | Converts data to JSON for the frontend |
-| Real-Time | Django Channels | Adds WebSocket support to Django |
-| Database | PostgreSQL | Stores users, rooms, messages permanently |
-| Message Broker | Redis | Lets WebSocket connections broadcast to each other |
-| ASGI Server | Daphne | Replaces Django's default server, supports WebSockets |
-| Authentication | SimpleJWT | Issues JWT tokens for login sessions |
-| Frontend | React.js | Single page app, handles UI and routing |
-| HTTP Client | Axios | Makes API requests from React to Django |
-| Frontend Hosting | Vercel | Hosts the production React build |
-| Backend Hosting | Railway | Hosts the Django/Daphne app, PostgreSQL, and Redis |
+ChatRoom is a full-stack messaging app where conversations actually feel *live*. Register, jump into a room, and watch messages, reactions, and notifications land on every screen instantly — no refresh, no delay.
+
+Under the hood, it's a Django + Channels backend talking over WebSockets to a React frontend, with Redis handling the real-time fan-out and PostgreSQL keeping everything persistent.
+
+<div align="center">
+
+**[🚀 Try it live](https://chat-room-two-pi.vercel.app/)** — just sign up and start chatting.
+
+</div>
 
 ---
 
-## Database Models
+## 🧩 Core Features
 
-The application has 5 database models:
+<div align="center">
 
-| Model | Description |
-|---|---|
-| UserProfile | Extends the built-in User with bio, avatar, and online status |
-| Room | A chat room with a name, slug, and list of members |
-| Message | A message sent in a room by a user |
-| MessageReaction | An emoji reaction on a message by a user |
-| Notification | An alert created for room members when a new message arrives |
+| | |
+|:---:|:---|
+| 🔐 | **JWT Authentication** — secure login with access + refresh token rotation |
+| ⚡ | **Real-Time Messaging** — WebSocket-powered chat with zero page reloads |
+| 😄 | **Emoji Reactions** — react live, toggle on/off, see it ripple instantly |
+| 🔔 | **Smart Notifications** — unread counts and alerts for every new message |
+| 🏠 | **Multiple Chat Rooms** — create, join, and switch between rooms freely |
+| 📜 | **Message History** — paginated history loads as you scroll back |
+
+</div>
 
 ---
 
-## Project Structure
+## 🛠️ Tech Stack
+
+<div align="center">
+
+### Backend
+![Django](https://img.shields.io/badge/Django-4.2-092E20?style=flat-square&logo=django&logoColor=white)
+![DRF](https://img.shields.io/badge/Django%20REST%20Framework-A30000?style=flat-square&logo=django&logoColor=white)
+![Channels](https://img.shields.io/badge/Django%20Channels-async-44B78B?style=flat-square)
+![Daphne](https://img.shields.io/badge/Daphne-ASGI-blue?style=flat-square)
+
+### Database & Messaging
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-pub%2Fsub-DC382D?style=flat-square&logo=redis&logoColor=white)
+![JWT](https://img.shields.io/badge/SimpleJWT-auth-black?style=flat-square&logo=jsonwebtokens)
+
+### Frontend
+![React](https://img.shields.io/badge/React.js-18-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Axios](https://img.shields.io/badge/Axios-HTTP-5A29E4?style=flat-square&logo=axios&logoColor=white)
+
+### Hosting
+![Vercel](https://img.shields.io/badge/Frontend-Vercel-black?style=flat-square&logo=vercel&logoColor=white)
+![Railway](https://img.shields.io/badge/Backend-Railway-0B0D0E?style=flat-square&logo=railway&logoColor=white)
+
+</div>
+
+---
+
+## 🏗️ How It's Built
+
+<div align="center">
+
+```
+React (Vercel)  ⇄  REST API + WebSocket  ⇄  Django + Channels (Railway)
+                                                      │
+                                          ┌───────────┴───────────┐
+                                          │                       │
+                                     PostgreSQL                 Redis
+                                  (rooms, messages)        (live broadcast)
+```
+
+</div>
+
+**The flow when you hit send:**
+
+1. Your message travels over an authenticated WebSocket connection
+2. Django Channels saves it to PostgreSQL and creates notifications for everyone else in the room
+3. Redis broadcasts it to every active connection in that room
+4. Everyone sees it appear — instantly
+
+---
+
+## 📂 Project Structure
 
 ```
 ChatRoom/
-├── backend/
-│   ├── config/
-│   │   ├── settings.py         # all django settings
-│   │   ├── urls.py             # main url routing
-│   │   └── asgi.py             # async server entry point (enables websockets)
-│   ├── users/
-│   │   ├── serializers.py      # validates register/login data
-│   │   ├── views.py            # register and profile endpoints
-│   │   ├── signals.py          # auto creates UserProfile on register
-│   │   ├── apps.py             # loads signals on startup
-│   │   └── urls.py             # auth url patterns
-│   ├── chat/
-│   │   ├── models.py           # all 5 database models
-│   │   ├── serializers.py      # converts models to json
-│   │   ├── views.py            # REST API views
-│   │   ├── consumers.py        # WebSocket handler (real-time logic)
-│   │   ├── middleware.py       # reads JWT token from websocket url
-│   │   ├── routing.py          # websocket url patterns
-│   │   ├── admin.py            # registers models in django admin
-│   │   └── urls.py             # REST url patterns
-│   ├── manage.py
-│   ├── nixpacks.toml           # build/start config for Railway
-│   ├── Procfile                # process definition for Railway
-│   ├── requirements.txt
-│   └── .env.example
+├── backend/                # Django + Channels + DRF
+│   ├── config/             # settings, urls, ASGI entry point
+│   ├── users/               # registration, auth, profiles
+│   └── chat/                # models, consumers, REST + WebSocket logic
 │
-└── frontend/
-    ├── public/
-    │   └── index.html
+└── frontend/                # React SPA
     └── src/
-        ├── api/
-        │   ├── api.js            # axios instance with base url and auth header
-        │   ├── auth.js           # register, login, profile api calls
-        │   └── chat.js           # rooms, messages, reactions, notifications
-        ├── context/
-        │   └── AuthContext.jsx   # global login state, stored in localStorage
-        ├── pages/
-        │   ├── LoginPage.jsx     # login and register form
-        │   ├── RoomsPage.jsx     # room list with notification bell
-        │   └── ChatPage.jsx      # chat with websocket + emoji reactions
-        ├── App.jsx               # routing and protected routes
-        └── index.js              # react entry point
+        ├── api/             # axios calls (auth, chat)
+        ├── context/         # global auth state
+        └── pages/           # Login, Rooms, Chat
 ```
 
 ---
 
-## How It Works
+## 🧠 Database Models
 
-### Authentication Flow
-1. User registers at `/api/auth/register/` — a UserProfile is auto-created via Django signals
-2. User logs in at `/api/auth/login/` and receives two JWT tokens
-   - Access token (valid 60 minutes) — sent with every API request
-   - Refresh token (valid 7 days) — used to get a new access token when old one expires
-3. React stores tokens in `localStorage` so the session survives page refresh
-4. Every API request automatically includes the token via an axios interceptor
+<div align="center">
 
-### Real-Time Messaging Flow
-1. User opens a chat room, React connects to the backend's WebSocket endpoint (`wss://<railway-domain>/ws/chat/<room-slug>/` in production, `ws://localhost:8000/ws/chat/<room-slug>/` locally)
-2. JWT token is passed as a query param since browsers cannot set custom headers on WebSockets
-3. Custom middleware reads and validates the token, attaches user to the connection
-4. User is marked as online in their UserProfile
-5. When a message is sent, the consumer saves it to PostgreSQL
-6. Notifications are created for all other room members
-7. Message is broadcast to the Redis channel group for that room
-8. Redis delivers it to every active connection in that room instantly
+| Model | Purpose |
+|:---|:---|
+| `UserProfile` | Extends Django's User with bio, avatar, online status |
+| `Room` | A chat room — name, slug, members |
+| `Message` | A message sent in a room |
+| `MessageReaction` | An emoji reaction on a message |
+| `Notification` | Alerts for new activity in a room |
 
-### Reactions Flow
-1. User hovers over a message and clicks the emoji button
-2. Emoji picker appears, user selects an emoji
-3. Reaction is sent over the WebSocket (not HTTP)
-4. Consumer toggles the reaction in the database
-5. Reaction update is broadcast to everyone in the room in real time
-6. Clicking the same emoji again removes the reaction
-
-### Notifications Flow
-1. When a message is sent, the backend creates a Notification for every room member except the sender
-2. The bell icon on the rooms page shows the unread count
-3. Clicking the bell fetches and displays recent notifications
-4. Opening the bell marks all notifications as read
-
-```
-User types message
-      ↓
-React sends over WebSocket
-      ↓
-consumers.py receives it
-      ↓
-Saved to PostgreSQL
-      ↓
-Notifications created for other members
-      ↓
-Broadcast to Redis group
-      ↓
-Redis delivers to all connections in room
-      ↓
-Everyone sees it instantly
-```
+</div>
 
 ---
 
-## Deployment
-
-### Backend — Railway
-
-The backend is deployed on [Railway](https://railway.app) as three services:
-
-- **Web service** — runs the Django/Daphne app, built and started via `nixpacks.toml` / `Procfile`
-  ```
-  web: daphne -b 0.0.0.0 -p $PORT --proxy-headers config.asgi:application
-  ```
-- **PostgreSQL** — managed Postgres instance, connected via the `DATABASE_URL` environment variable
-- **Redis** — managed Redis instance, connected via the `REDIS_URL` environment variable (used by Django Channels for pub/sub between connections)
-
-Required environment variables on the Railway web service:
-
-| Variable | Description |
-|---|---|
-| `SECRET_KEY` | Django secret key |
-| `DEBUG` | Set to `False` in production |
-| `DATABASE_URL` | Auto-provided by Railway's Postgres service |
-| `REDIS_URL` | Auto-provided by Railway's Redis service |
-
-### Frontend — Vercel
-
-The React frontend is deployed on [Vercel](https://vercel.com). The production build points its API base URL and WebSocket URL at the Railway backend domain (using `https://` / `wss://`).
-
-| Variable | Description |
-|---|---|
-| `REACT_APP_API_URL` | Base URL of the Railway backend, e.g. `https://chatroom-production-05d7.up.railway.app` |
-| `REACT_APP_WS_URL` | WebSocket base URL, e.g. `wss://chatroom-production-05d7.up.railway.app` |
-
----
-
-## Local Development Setup
+## 🚀 Getting Started Locally
 
 ### Prerequisites
 - Python 3.10+
 - Node.js 18+ (LTS)
 - PostgreSQL
-- Memurai (Redis for Windows) — https://www.memurai.com
+- [Memurai](https://www.memurai.com) (Redis for Windows)
 
-### Backend Setup
+### Backend
 
-**1. Create the database in PostgreSQL**
-```sql
-CREATE DATABASE chatapp_db;
-```
-
-**2. Create and activate virtual environment**
-```cmd
+```bash
 cd backend
 "C:\Program Files\Python313\python.exe" -m venv venv
 venv\Scripts\activate
-```
-
-**3. Install dependencies**
-```cmd
 venv\Scripts\pip.exe install setuptools
 venv\Scripts\pip.exe install -r requirements.txt
-```
 
-**4. Configure environment variables**
-```cmd
 copy .env.example .env
-```
-Open `.env` and fill in your database password and a random secret key.
+# fill in your DB credentials + a secret key
 
-**5. Run migrations**
-```cmd
-venv\Scripts\python.exe manage.py makemigrations
 venv\Scripts\python.exe manage.py migrate
-```
-
-**6. Create admin user**
-```cmd
 venv\Scripts\python.exe manage.py createsuperuser
-```
-
-**7. Start the backend server**
-```cmd
 venv\Scripts\python.exe -m daphne -p 8000 config.asgi:application
 ```
 
-### Frontend Setup
+### Frontend
 
-**1. Install dependencies**
-```cmd
+```bash
 cd frontend
 npm install
-```
-
-**2. Start the frontend**
-```cmd
 npm start
 ```
 
-Browser opens automatically at `http://localhost:3000`
+The app opens at `http://localhost:3000`. Make sure PostgreSQL and Memurai are running in the background.
 
 ---
 
-## Running the App Locally
+## 🔌 API & WebSocket Reference
 
-Four things need to be running at the same time:
+<div align="center">
 
-| What | How |
-|---|---|
-| PostgreSQL | Runs as Windows service automatically on boot |
-| Memurai (Redis) | Runs as Windows service automatically on boot |
-| Django backend | `venv\Scripts\python.exe -m daphne -p 8000 config.asgi:application` |
-| React frontend | `npm start` in frontend folder |
+| Method | Endpoint | Description |
+|:---:|:---|:---|
+| `POST` | `/api/auth/register/` | Create an account |
+| `POST` | `/api/auth/login/` | Get JWT tokens |
+| `GET` | `/api/chat/rooms/` | List rooms |
+| `POST` | `/api/chat/rooms/<slug>/join/` | Join a room |
+| `GET` | `/api/chat/rooms/<slug>/messages/` | Paginated message history |
+| `POST` | `/api/chat/messages/<id>/react/` | Add/remove a reaction |
+| `GET` | `/api/chat/notifications/` | Get notifications |
 
----
+</div>
 
-## API Endpoints
-
-### Authentication
-| Method | URL | Description | Auth Required |
-|---|---|---|---|
-| POST | /api/auth/register/ | Create account | No |
-| POST | /api/auth/login/ | Get JWT tokens | No |
-| POST | /api/auth/refresh/ | Refresh access token | No |
-| GET | /api/auth/profile/ | Get current user info | Yes |
-
-### Chat
-| Method | URL | Description | Auth Required |
-|---|---|---|---|
-| GET | /api/chat/rooms/ | List all rooms | Yes |
-| POST | /api/chat/rooms/ | Create a room | Yes |
-| GET | /api/chat/rooms/\<slug\>/ | Get room + recent messages | Yes |
-| POST | /api/chat/rooms/\<slug\>/join/ | Join a room | Yes |
-| GET | /api/chat/rooms/\<slug\>/messages/ | Get paginated message history | Yes |
-| POST | /api/chat/messages/\<id\>/react/ | Add or remove emoji reaction | Yes |
-| GET | /api/chat/notifications/ | Get all notifications | Yes |
-| POST | /api/chat/notifications/read/ | Mark all notifications as read | Yes |
-| GET | /api/chat/notifications/unread-count/ | Get unread notification count | Yes |
-| GET | /api/chat/profile/\<username\>/ | Get user profile | Yes |
-| PATCH | /api/chat/profile/\<username\>/ | Update your profile | Yes |
-
-### WebSocket
-
-**Local:**
+**WebSocket:**
 ```
-ws://localhost:8000/ws/chat/<room-slug>/?token=<access-token>
+wss://<railway-domain>/ws/chat/<room-slug>/?token=<access-token>
 ```
 
-**Production:**
-```
-wss://chatroom-production-05d7.up.railway.app/ws/chat/<room-slug>/?token=<access-token>
-```
+```jsonc
+// send a message
+{ "type": "message", "message": "hello" }
 
-**Send a message:**
-```json
-{"type": "message", "message": "hello"}
-```
-
-**Send a reaction:**
-```json
-{"type": "reaction", "message_id": 5, "emoji": "👍"}
-```
-
-**Receive events:**
-```json
-{"type": "message", "message_id": 1, "message": "hello", "username": "qasim", "timestamp": "..."}
-{"type": "reaction", "message_id": 1, "emoji": "👍", "username": "qasim", "action": "added"}
-{"type": "user_join", "username": "qasim"}
-{"type": "user_leave", "username": "qasim"}
+// send a reaction
+{ "type": "reaction", "message_id": 5, "emoji": "👍" }
 ```
 
 ---
 
-## Key Concepts Covered
+## 🎯 What This Project Demonstrates
 
-- **REST API design** — proper HTTP methods, status codes, serializers, pagination
-- **JWT Authentication** — stateless auth with access and refresh tokens
-- **Django Signals** — auto creating UserProfile when a user registers
-- **WebSockets** — persistent bidirectional connections for real-time communication
-- **Async programming** — Django Channels runs async consumers, database calls wrapped with `database_sync_to_async`
-- **Message broker pattern** — Redis as a pub/sub layer between server processes
-- **React state management** — Context API for global auth state
-- **Protected routing** — redirect unauthenticated users back to login
-- **CORS** — configured to allow the deployed frontend to talk to Django
-- **Deployment** — Django/Daphne + PostgreSQL + Redis on Railway, React build on Vercel
+<div align="center">
+
+`REST API design` · `JWT authentication` · `WebSockets` · `Async Django (Channels)` · `Redis pub/sub` · `React state management` · `Protected routing` · `CI-style deployment (Vercel + Railway)`
+
+</div>
 
 ---
 
-## Admin Panel
+<div align="center">
 
-Local: `http://localhost:8000/admin`  
-Production: `https://chatroom-production-05d7.up.railway.app/admin`
+Built by **Muhammad Qasim Akram**
+[GitHub](https://github.com/Qasim-Akram) · [Live Demo](https://chat-room-two-pi.vercel.app/)
 
-Log in with your superuser credentials to manage all models — Users, UserProfiles, Rooms, Messages, MessageReactions, and Notifications.
+</div>
